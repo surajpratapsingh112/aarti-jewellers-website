@@ -4,9 +4,10 @@ export async function GET() {
   try {
     await ensureTable();
     const result = await query(
-      `SELECT id, name, review_text, rating, created_at
+      `SELECT id, name, review_text, rating, created_at, featured, featured_at
        FROM reviews WHERE status = 'approved'
-       ORDER BY created_at DESC LIMIT 20`
+       ORDER BY featured DESC, featured_at DESC NULLS LAST, created_at DESC
+       LIMIT 200`
     );
     return Response.json({ ok: true, reviews: result.rows });
   } catch (err) {

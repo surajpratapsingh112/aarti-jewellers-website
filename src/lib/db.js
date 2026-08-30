@@ -31,9 +31,14 @@ export async function ensureTable() {
       rating INTEGER,
       status TEXT NOT NULL DEFAULT 'pending',
       approve_token TEXT NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      featured BOOLEAN NOT NULL DEFAULT false,
+      featured_at TIMESTAMPTZ
     );
   `);
+  // Safe to run every time - adds the columns only if an older table exists without them.
+  await p.query(`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS featured BOOLEAN NOT NULL DEFAULT false;`);
+  await p.query(`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS featured_at TIMESTAMPTZ;`);
   tableReady = true;
 }
 

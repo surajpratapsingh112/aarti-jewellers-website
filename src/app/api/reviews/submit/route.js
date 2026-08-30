@@ -38,6 +38,7 @@ export async function POST(request) {
     // RESEND_API_KEY is added in Vercel's Environment Variables.
     if (RESEND_API_KEY && SITE_URL) {
       const approveUrl = `${SITE_URL}/api/reviews/approve?id=${id}&token=${token}`;
+      const featureUrl = `${SITE_URL}/api/reviews/feature?id=${id}&token=${token}`;
       try {
         await fetch("https://api.resend.com/emails", {
           method: "POST",
@@ -60,6 +61,16 @@ export async function POST(request) {
                   </a>
                 </p>
                 <p style="color:#888; font-size:12px;">If you don't recognize this or don't want it published, just ignore this email - it won't go live unless you click Approve.</p>
+                <hr style="border:none; border-top:1px solid #eee; margin:20px 0;" />
+                <p style="color:#555; font-size:13px;">
+                  Want to pin this review near the top of your reviews section (Top 10)? You can use the button below <strong>any time</strong> - right now or weeks later, once the review is already approved and live:
+                </p>
+                <p>
+                  <a href="${featureUrl}" style="display:inline-block; background:#b8860b; color:#fff; padding:10px 20px; border-radius:24px; text-decoration:none;">
+                    Add / Remove from Top 10
+                  </a>
+                </p>
+                <p style="color:#aaa; font-size:11px;">Tip: save this email - clicking the Top 10 button toggles it on and off, so you can reuse this same link whenever you want.</p>
               </div>
             `,
           }),

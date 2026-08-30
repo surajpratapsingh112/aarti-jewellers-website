@@ -266,8 +266,11 @@ function StarIcon({ filled, ...props }) {
 // Approved visitor-submitted reviews, fetched from /api/reviews/list.
 // Renders nothing extra until the database + email are configured -
 // the seed Google reviews above always show regardless.
+const REVIEWS_PAGE_SIZE = 10;
+
 function VisitorReviews() {
   const [reviews, setReviews] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(REVIEWS_PAGE_SIZE);
 
   useEffect(() => {
     let cancelled = false;
@@ -282,9 +285,12 @@ function VisitorReviews() {
     };
   }, []);
 
+  const visibleReviews = reviews.slice(0, visibleCount);
+  const hasMore = visibleCount < reviews.length;
+
   return (
     <>
-      {reviews.map((r) => (
+      {visibleReviews.map((r) => (
         <motion.blockquote
           key={r.id}
           variants={fadeUp}
@@ -292,6 +298,11 @@ function VisitorReviews() {
           animate="show"
           className="relative rounded-[1.75rem] border border-[color:var(--gold-light)]/30 bg-white/70 p-7 text-[#4a2f22]"
         >
+          {r.featured ? (
+            <span className="absolute -top-3 right-6 rounded-full bg-[color:var(--gold)] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow">
+              Top Review
+            </span>
+          ) : null}
           <QuoteMark className="h-7 w-10 text-[color:var(--gold)]/50" />
           {r.rating ? (
             <div className="mt-2 flex gap-0.5 text-[color:var(--gold)]">
@@ -304,6 +315,17 @@ function VisitorReviews() {
           <footer className="mt-4 text-sm font-medium text-[color:var(--maroon)]">{r.name}</footer>
         </motion.blockquote>
       ))}
+      {hasMore ? (
+        <div className="col-span-full mt-4 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((c) => c + REVIEWS_PAGE_SIZE)}
+            className="rounded-full border border-[color:var(--gold)] px-6 py-2.5 text-sm font-medium text-[color:var(--maroon)] transition hover:bg-[color:var(--gold)] hover:text-white"
+          >
+            See More Reviews
+          </button>
+        </div>
+      ) : null}
     </>
   );
 }
