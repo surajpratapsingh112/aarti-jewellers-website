@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const WHATSAPP_NUMBER = "917007307829"; // TODO: confirm with owner, currently from Google Maps listing
 const PHONE_DISPLAY = "070073 07829";
@@ -255,6 +255,169 @@ function Section({ id, className = "", children }) {
   );
 }
 
+function StarIcon({ filled, ...props }) {
+  return (
+    <svg viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" {...props}>
+      <path d="M12 2.5l2.9 6.3 6.9.7-5.1 4.7 1.5 6.8L12 17.6l-6.2 3.4 1.5-6.8-5.1-4.7 6.9-.7L12 2.5Z" />
+    </svg>
+  );
+}
+
+// Approved visitor-submitted reviews, fetched from /api/reviews/list.
+// Renders nothing extra until the database + email are configured -
+// the seed Google reviews above always show regardless.
+function VisitorReviews() {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/reviews/list")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled && data.ok) setReviews(data.reviews);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <>
+      {reviews.map((r) => (
+        <motion.blockquote
+          key={r.id}
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          className="relative rounded-[1.75rem] border border-[color:var(--gold-light)]/30 bg-white/70 p-7 text-[#4a2f22]"
+        >
+          <QuoteMark className="h-7 w-10 text-[color:var(--gold)]/50" />
+          {r.rating ? (
+            <div className="mt-2 flex gap-0.5 text-[color:var(--gold)]">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <StarIcon key={i} filled={i < r.rating} className="h-3.5 w-3.5" />
+              ))}
+            </div>
+          ) : null}
+          <p className="font-display mt-2 text-xl italic">&ldquo;{r.review_text}&rdquo;</p>
+          <footer className="mt-4 text-sm font-medium text-[color:var(--maroon)]">{r.name}</footer>
+        </motion.blockquote>
+      ))}
+    </>
+  );
+}
+
+// "Leave a review" form - submits to /api/reviews/submit, which emails the
+// owner an Approve link. The review only appears above once approved.
+function ReviewForm() {
+  const [name, setName] = useState("");
+  const [review, setReview] = useState("");
+  const [rating, setRating] = useState(5);
+  const [status, setStatus] = useState("idle"); // idle | submitting | success | error
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!name.trim() || !review.trim()) return;
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/reviews/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, review, rating, website: "" }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus("success");
+        setName("");
+        setReview("");
+        setRating(5);
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="mx-auto mt-14 max-w-xl rounded-[1.75rem] border border-[color:var(--gold-light)]/30 bg-white/70 p-7"
+    >
+      <h3 className="font-display text-xl font-semibold text-[color:var(--maroon)]">Leave a Review</h3>
+      <p className="mt-1 text-sm text-[#5a4638]">
+        Visited the store? Share your experience - it goes to the owner first and appears here once approved.
+      </p>
+
+      {status === "success" ? (
+        <p className="mt-5 rounded-2xl bg-[#e9f5e9] px-4 py-3 text-sm text-[#215c2b]">
+          Thank you! Your review has been sent for approval.
+        </p>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[#5a4638]">Your name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              maxLength={80}
+              className="w-full rounded-xl border border-[color:var(--gold-light)]/40 bg-white px-4 py-2.5 text-sm outline-none focus:border-[color:var(--maroon)]"
+              placeholder="e.g. Priya Sharma"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[#5a4638]">Rating</label>
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <button
+                  type="button"
+                  key={i}
+                  onClick={() => setRating(i + 1)}
+                  className="text-[color:var(--gold)]"
+                  aria-label={`${i + 1} star`}
+                >
+                  <StarIcon filled={i < rating} className="h-6 w-6" />
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[#5a4638]">Your review</label>
+            <textarea
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+              required
+              maxLength={1000}
+              rows={4}
+              className="w-full rounded-xl border border-[color:var(--gold-light)]/40 bg-white px-4 py-2.5 text-sm outline-none focus:border-[color:var(--maroon)]"
+              placeholder="Tell others about your experience..."
+            />
+          </div>
+          {/* Honeypot field - hidden from real visitors, bots often fill every field */}
+          <input type="text" name="website" tabIndex="-1" autoComplete="off" className="hidden" />
+
+          {status === "error" && (
+            <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
+          )}
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={status === "submitting"}
+            className="rounded-full bg-[color:var(--maroon)] px-6 py-2.5 text-sm font-semibold text-white shadow-md disabled:opacity-60"
+          >
+            {status === "submitting" ? "Sending..." : "Submit Review"}
+          </motion.button>
+        </form>
+      )}
+    </motion.div>
+  );
+}
+
 export default function Home() {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -432,7 +595,10 @@ export default function Home() {
               <p className="font-display mt-2 text-xl italic">&ldquo;Good jeweller&rdquo;</p>
               <footer className="mt-4 text-sm font-medium text-[color:var(--maroon)]">Anchal Rastogi</footer>
             </motion.blockquote>
+            <VisitorReviews />
           </div>
+
+          <ReviewForm />
         </div>
       </Section>
 
