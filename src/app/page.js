@@ -125,25 +125,29 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
 }
 
 // ---------- Animated logo: Suraj Digital Works (site credit) ----------
-// 12 rays, alternating short/long like real sun rays. Each ray twinkles in and
-// out on its own random-feeling delay, instead of the whole sun spinning.
-const SUN_RAYS = Array.from({ length: 12 }).map((_, i) => {
-  const angle = (i / 12) * Math.PI * 2;
+// 20 rays, evenly spaced, alternating short/long like real sun rays.
+// All short rays pulse outward together, then all long rays pulse outward
+// together, then back to short - one wave at a time, not per-ray random.
+const SUN_RAY_COUNT = 20;
+const SUN_RAYS = Array.from({ length: SUN_RAY_COUNT }).map((_, i) => {
+  const angle = (i / SUN_RAY_COUNT) * Math.PI * 2;
   const isLong = i % 2 === 0;
   const inner = 17;
-  const outerShort = 22;
-  const outerLong = 28;
-  const outer = isLong ? outerLong : outerShort;
+  const outer = isLong ? 29 : 22;
   return {
     key: i,
+    isLong,
     x1: 32 + inner * Math.cos(angle),
     y1: 32 + inner * Math.sin(angle),
     x2: 32 + outer * Math.cos(angle),
     y2: 32 + outer * Math.sin(angle),
-    width: isLong ? 2.6 : 1.8,
-    delay: (i * 0.23) % 2.4,
+    width: isLong ? 2.4 : 1.6,
   };
 });
+
+const RAY_PULSE_DURATION = 0.8;
+const RAY_PULSE_GAP = 1.0;
+const RAY_PULSE_PERIOD = RAY_PULSE_DURATION + RAY_PULSE_GAP;
 
 function SurajLogo({ withText = true, size = 34 }) {
   return (
@@ -165,9 +169,15 @@ function SurajLogo({ withText = true, size = 34 }) {
             stroke="url(#sunGrad)"
             strokeWidth={r.width}
             strokeLinecap="round"
-            initial={{ opacity: 0.15, pathLength: 0.5 }}
-            animate={{ opacity: [0.15, 1, 0.15], pathLength: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut", delay: r.delay }}
+            initial={{ opacity: 0.18, pathLength: 0.55 }}
+            animate={{ opacity: [0.18, 1, 0.18], pathLength: [0.55, 1, 0.55] }}
+            transition={{
+              repeat: Infinity,
+              duration: RAY_PULSE_DURATION,
+              ease: "easeInOut",
+              repeatDelay: RAY_PULSE_GAP,
+              delay: r.isLong ? RAY_PULSE_PERIOD / 2 : 0,
+            }}
           />
         ))}
         <motion.circle
@@ -185,7 +195,7 @@ function SurajLogo({ withText = true, size = 34 }) {
         </text>
       </svg>
       {withText && (
-        <span className="text-[10px] font-medium leading-tight tracking-wide text-[#e8e2d8]/90">
+        <span className="text-[9px] font-medium leading-tight tracking-wide text-[#e8e2d8]/90">
           Suraj Digital Works
         </span>
       )}
@@ -497,7 +507,7 @@ export default function Home() {
           <AartiLogo size={34} onDark />
           <span className="text-sm text-[#e8e2d8]/80">Triveni Nagar, Lucknow</span>
           <div className="mt-2 flex items-center gap-1.5 rounded-full border border-[color:var(--gold-light)]/20 px-3 py-1.5">
-            <span className="text-[9px] uppercase tracking-wide text-[#e8e2d8]/60">by</span>
+            <span className="text-[9px] uppercase tracking-wide text-[#e8e2d8]/60">Designed &amp; Developed by</span>
             <SurajLogo size={38} />
           </div>
         </div>
