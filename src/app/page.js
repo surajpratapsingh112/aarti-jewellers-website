@@ -125,47 +125,70 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
 }
 
 // ---------- Animated logo: Suraj Digital Works (site credit) ----------
-function SurajLogo({ withText = true, size = 30 }) {
+// 12 rays, alternating short/long like real sun rays. Each ray twinkles in and
+// out on its own random-feeling delay, instead of the whole sun spinning.
+const SUN_RAYS = Array.from({ length: 12 }).map((_, i) => {
+  const angle = (i / 12) * Math.PI * 2;
+  const isLong = i % 2 === 0;
+  const inner = 17;
+  const outerShort = 22;
+  const outerLong = 28;
+  const outer = isLong ? outerLong : outerShort;
+  return {
+    key: i,
+    x1: 32 + inner * Math.cos(angle),
+    y1: 32 + inner * Math.sin(angle),
+    x2: 32 + outer * Math.cos(angle),
+    y2: 32 + outer * Math.sin(angle),
+    width: isLong ? 2.6 : 1.8,
+    delay: (i * 0.23) % 2.4,
+  };
+});
+
+function SurajLogo({ withText = true, size = 34 }) {
   return (
-    <div className="inline-flex items-center gap-2">
-      <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0">
+    <div className="inline-flex items-center gap-1.5">
+      <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0 overflow-visible">
         <defs>
           <linearGradient id="sunGrad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#ffb347" />
             <stop offset="1" stopColor="#ff7a30" />
           </linearGradient>
         </defs>
-        <motion.g
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
-          style={{ transformOrigin: "32px 32px" }}
-        >
-          {Array.from({ length: 8 }).map((_, i) => {
-            const angle = (i / 8) * Math.PI * 2;
-            const x1 = 32 + 20 * Math.cos(angle);
-            const y1 = 32 + 20 * Math.sin(angle);
-            const x2 = 32 + 27 * Math.cos(angle);
-            const y2 = 32 + 27 * Math.sin(angle);
-            return (
-              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="url(#sunGrad)" strokeWidth="3" strokeLinecap="round" />
-            );
-          })}
-        </motion.g>
+        {SUN_RAYS.map((r) => (
+          <motion.line
+            key={r.key}
+            x1={r.x1}
+            y1={r.y1}
+            x2={r.x2}
+            y2={r.y2}
+            stroke="url(#sunGrad)"
+            strokeWidth={r.width}
+            strokeLinecap="round"
+            initial={{ opacity: 0.15, pathLength: 0.5 }}
+            animate={{ opacity: [0.15, 1, 0.15], pathLength: [0.5, 1, 0.5] }}
+            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut", delay: r.delay }}
+          />
+        ))}
         <motion.circle
           cx="32"
           cy="32"
-          r="15"
+          r="14"
           fill="#1f2937"
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
           style={{ transformOrigin: "32px 32px" }}
         />
-        <circle cx="32" cy="32" r="15" fill="none" stroke="url(#sunGrad)" strokeWidth="1.5" />
-        <text x="32" y="37" textAnchor="middle" fontFamily="ui-sans-serif, system-ui" fontSize="11" fontWeight="700" fill="#ffb347">
+        <circle cx="32" cy="32" r="14" fill="none" stroke="url(#sunGrad)" strokeWidth="1.5" />
+        <text x="32" y="36.5" textAnchor="middle" fontFamily="ui-sans-serif, system-ui" fontSize="10" fontWeight="700" fill="#ffb347">
           SDW
         </text>
       </svg>
-      {withText && <span className="text-sm font-semibold tracking-wide text-[#e8e2d8]">Suraj Digital Works</span>}
+      {withText && (
+        <span className="text-[10px] font-medium leading-tight tracking-wide text-[#e8e2d8]/90">
+          Suraj Digital Works
+        </span>
+      )}
     </div>
   );
 }
@@ -473,9 +496,9 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-5 text-center">
           <AartiLogo size={34} onDark />
           <span className="text-sm text-[#e8e2d8]/80">Triveni Nagar, Lucknow</span>
-          <div className="mt-2 flex items-center gap-2 rounded-full border border-[color:var(--gold-light)]/20 px-4 py-2">
-            <span className="text-xs text-[#e8e2d8]/70">Website designed &amp; developed by</span>
-            <SurajLogo size={26} />
+          <div className="mt-2 flex items-center gap-1.5 rounded-full border border-[color:var(--gold-light)]/20 px-3 py-1.5">
+            <span className="text-[9px] uppercase tracking-wide text-[#e8e2d8]/60">by</span>
+            <SurajLogo size={38} />
           </div>
         </div>
       </footer>
