@@ -5,7 +5,7 @@ import crypto from "crypto";
 // in the Vercel project's Environment Variables.
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || "surajpratapsingh112@gmail.com";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const SITE_URL = process.env.SITE_URL || "";
+const SITE_URL = (process.env.SITE_URL || "").replace(/\/+$/, ""); // strip trailing slash(es)
 
 export async function POST(request) {
   try {
