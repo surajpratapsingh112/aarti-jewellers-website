@@ -56,7 +56,7 @@ function QuoteMark(props) {
 }
 
 // ---------- Animated logo: Aarti Jewellers & Fashions ----------
-function AartiLogo({ withText = true, size = 40 }) {
+function AartiLogo({ withText = true, size = 40, onDark = false }) {
   return (
     <div className="flex items-center gap-2.5">
       <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0">
@@ -112,7 +112,11 @@ function AartiLogo({ withText = true, size = 40 }) {
         </g>
       </svg>
       {withText && (
-        <span className="font-display text-lg font-semibold tracking-wide text-[color:var(--maroon)]">
+        <span
+          className={`font-display text-lg font-semibold tracking-wide ${
+            onDark ? "text-[color:var(--gold-pale)]" : "text-[color:var(--maroon)]"
+          }`}
+        >
           Aarti <span className="font-script italic text-[color:var(--gold)]">Jewellers &amp; Fashions</span>
         </span>
       )}
@@ -467,7 +471,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="border-t border-[color:var(--gold-light)]/30 bg-[color:var(--maroon-deep)] py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-5 px-5 text-center">
-          <AartiLogo size={34} />
+          <AartiLogo size={34} onDark />
           <span className="text-sm text-[#e8e2d8]/80">Triveni Nagar, Lucknow</span>
           <div className="mt-2 flex items-center gap-2 rounded-full border border-[color:var(--gold-light)]/20 px-4 py-2">
             <span className="text-xs text-[#e8e2d8]/70">Website designed &amp; developed by</span>
