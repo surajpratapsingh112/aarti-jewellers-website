@@ -57,79 +57,89 @@ function QuoteMark(props) {
 
 // ---------- Animated logo: Aarti Jewellers & Fashions ----------
 function AartiLogo({ withText = true, size = 40, onDark = false }) {
+  // Aspect ratio of the customer-supplied AJ artwork (public/aj-logo.png), so it
+  // never stretches: cropped image is 544 x 432.
+  const AJ_IMG_ASPECT = 432 / 544;
   return (
     <div className="flex items-center gap-2.5">
-      <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0 overflow-visible">
-        <defs>
-          <linearGradient id="ajGold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#d4af37" />
-            <stop offset="0.5" stopColor="#f1d688" />
-            <stop offset="1" stopColor="#b8860b" />
-          </linearGradient>
-          <clipPath id="ajClip">
+      <div className="relative shrink-0" style={{ width: size, height: size }}>
+        <svg width={size} height={size} viewBox="0 0 64 64" className="absolute inset-0 overflow-visible">
+          <defs>
+            <linearGradient id="ajGold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#d4af37" />
+              <stop offset="0.5" stopColor="#f1d688" />
+              <stop offset="1" stopColor="#b8860b" />
+            </linearGradient>
+            <clipPath id="ajClip">
+              <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" />
+            </clipPath>
+            <filter id="ajHaloBlur" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="3.4" />
+            </filter>
+          </defs>
+          {/* soft pulsing halo behind the badge - same glow language as the SDW mark */}
+          <motion.circle
+            cx="32"
+            cy="32"
+            r="30"
+            fill="url(#ajGold)"
+            filter="url(#ajHaloBlur)"
+            animate={{ opacity: [0.2, 0.5, 0.2], r: [28, 32, 28] }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            style={{ transformOrigin: "32px 32px" }}
+          />
+          {/* rotating bezel dots */}
+          <motion.g
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
+            style={{ transformOrigin: "32px 32px" }}
+          >
+            {Array.from({ length: 12 }).map((_, i) => {
+              const angle = (i / 12) * Math.PI * 2;
+              const r = 30;
+              return (
+                <circle
+                  key={i}
+                  cx={32 + r * Math.cos(angle)}
+                  cy={32 + r * Math.sin(angle)}
+                  r="1.3"
+                  fill="#5b1220"
+                  opacity="0.55"
+                />
+              );
+            })}
+          </motion.g>
+          <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" fill="#5b1220" />
+          <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="url(#ajGold)" stroke="#3d0c15" strokeWidth="1" />
+        </svg>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/aj-logo.png"
+          alt="Aarti Jewellers & Fashions logo"
+          draggable={false}
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none"
+          style={{ width: size * 0.8, height: size * 0.8 * AJ_IMG_ASPECT }}
+        />
+        {/* shimmer sweep, layered above the artwork */}
+        <svg width={size} height={size} viewBox="0 0 64 64" className="absolute inset-0 overflow-visible">
+          <clipPath id="ajClip2">
             <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" />
           </clipPath>
-          <filter id="ajHaloBlur" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="3.4" />
-          </filter>
-        </defs>
-        {/* soft pulsing halo behind the badge - same glow language as the SDW mark */}
-        <motion.circle
-          cx="32"
-          cy="32"
-          r="30"
-          fill="url(#ajGold)"
-          filter="url(#ajHaloBlur)"
-          animate={{ opacity: [0.2, 0.5, 0.2], r: [28, 32, 28] }}
-          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-          style={{ transformOrigin: "32px 32px" }}
-        />
-        {/* rotating bezel dots */}
-        <motion.g
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
-          style={{ transformOrigin: "32px 32px" }}
-        >
-          {Array.from({ length: 12 }).map((_, i) => {
-            const angle = (i / 12) * Math.PI * 2;
-            const r = 30;
-            return (
-              <circle
-                key={i}
-                cx={32 + r * Math.cos(angle)}
-                cy={32 + r * Math.sin(angle)}
-                r="1.3"
-                fill="#5b1220"
-                opacity="0.55"
-              />
-            );
-          })}
-        </motion.g>
-        <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" fill="#5b1220" />
-        <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="url(#ajGold)" stroke="#3d0c15" strokeWidth="1" />
-        {/* Traced directly from the shop's own signboard photo (potrace silhouette
-            trace, not hand-drawn) - the real AJ letterform + flourish, recolored to
-            match this badge's ink-on-gold style. */}
-        <g transform="translate(9,13.85) scale(0.0852)">
-          <g transform="translate(-11.004906,439.038648) scale(0.1,-0.1)" fill="#3d0c15" stroke="none">
-            <path d="M2063 4370 c-50 -30 -77 -82 -137 -255 -30 -88 -85 -245 -121 -350 -75 -214 -187 -548 -235 -703 -18 -56 -35 -104 -39 -107 -11 -6 -95 27 -166 66 -192 104 -345 226 -600 478 -193 191 -236 228 -350 303 -236 155 -235 155 -221 21 11 -107 3 -159 -25 -168 -67 -21 -79 -149 -25 -260 112 -233 695 -887 926 -1038 80 -52 104 -56 136 -21 l27 29 33 -32 c40 -37 40 -44 13 -137 -36 -124 -60 -183 -88 -217 l-27 -32 -117 1 c-104 2 -124 -1 -189 -24 -40 -15 -100 -36 -134 -48 -96 -33 -94 -29 -93 -180 2 -211 -9 -201 299 -256 145 -26 410 -77 498 -96 99 -22 136 -14 170 37 l27 39 100 -6 c124 -7 159 10 187 91 44 127 8 209 -123 282 -59 33 -58 29 -14 185 59 206 36 190 217 153 72 -14 185 -28 273 -32 l149 -8 12 -35 c40 -112 134 -433 134 -453 0 -14 -7 -44 -15 -67 -33 -93 -15 -169 58 -247 l29 -31 -101 -7 c-108 -8 -116 -12 -107 -50 10 -38 60 -58 166 -66 52 -4 121 -13 152 -20 51 -11 62 -10 116 10 88 33 128 15 80 -36 -31 -33 -17 -39 106 -47 134 -9 161 4 124 64 -18 28 -9 30 52 13 92 -24 209 -23 246 4 58 41 84 138 70 255 -10 75 -10 75 -136 109 -160 41 -171 55 -262 314 -110 311 -130 374 -125 388 3 8 29 20 59 27 29 7 141 37 248 66 107 29 198 50 201 46 22 -25 47 -994 31 -1193 -26 -308 -102 -449 -244 -449 -76 0 -138 -34 -235 -128 -89 -87 -90 -89 -112 -171 -26 -96 -20 -128 32 -179 75 -72 168 -89 267 -47 33 14 79 25 103 25 94 0 201 49 346 157 353 265 474 631 440 1328 -17 367 -26 709 -18 719 24 27 326 -48 467 -115 195 -94 474 -320 624 -506 34 -43 83 -87 125 -115 37 -25 85 -60 107 -77 49 -39 60 -32 52 33 -34 257 -103 405 -315 671 -310 387 -709 694 -1002 770 -101 26 -94 13 -107 201 -14 187 -13 190 47 185 96 -6 140 44 148 168 5 84 6 82 -57 132 -77 61 -147 88 -420 158 -85 22 -216 56 -290 75 -209 55 -249 49 -289 -45 -52 -119 21 -241 178 -303 40 -16 72 -35 75 -44 8 -27 19 -462 12 -462 -48 0 -347 -51 -506 -87 -271 -61 -248 -63 -276 22 -23 73 -93 294 -149 475 -123 394 -198 625 -225 690 -61 150 -174 217 -267 160z m2017 -769 c0 -12 -28 -22 -34 -12 -3 5 -3 11 1 15 9 9 33 7 33 -3z m-1950 -171 c0 -27 -4 -50 -10 -50 -11 0 -13 42 -4 78 10 35 14 26 14 -28z m-1350 -56 c0 -8 -4 -12 -10 -9 -5 3 -10 10 -10 16 0 5 5 9 10 9 6 0 10 -7 10 -16z" />
+          <g clipPath="url(#ajClip2)">
+            <motion.rect
+              x="-40"
+              y="0"
+              width="24"
+              height="64"
+              fill="white"
+              opacity="0.35"
+              animate={{ x: [-40, 90] }}
+              transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut", repeatDelay: 1.4 }}
+              style={{ transform: "skewX(-20deg)" }}
+            />
           </g>
-        </g>
-        {/* shimmer sweep */}
-        <g clipPath="url(#ajClip)">
-          <motion.rect
-            x="-40"
-            y="0"
-            width="24"
-            height="64"
-            fill="white"
-            opacity="0.35"
-            animate={{ x: [-40, 90] }}
-            transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut", repeatDelay: 1.4 }}
-            style={{ transform: "skewX(-20deg)" }}
-          />
-        </g>
-      </svg>
+        </svg>
+      </div>
       {withText && (
         <span
           className={`font-display text-lg font-semibold tracking-wide ${
