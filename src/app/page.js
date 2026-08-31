@@ -112,38 +112,28 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
             static bar - it is the same flourish stroke that sweeps in from A's side,
             forms the crossbar, and flows on into J, then loops and redraws. */}
         <path
-          d="M 15,47 L 27,15 L 33,47"
-          fill="none"
-          stroke="#3d0c15"
-          strokeWidth="5.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M 41,19 C 45,16.5 49,18.5 47,22.5 C 46,24.5 42.5,23.5 42.5,21"
-          fill="none"
-          stroke="#3d0c15"
-          strokeWidth="3.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M 44,23 L 41,47"
+          d="M 6,45 L 14,45 M 10,43 L 26,5 L 22,43 M 17,45 L 25,45"
           fill="none"
           stroke="#3d0c15"
           strokeWidth="4.6"
           strokeLinecap="round"
+          strokeLinejoin="round"
         />
-        <motion.path
-          d="M 8,35 C 11,30 15,33 13,37 C 19,33 26,38 32,39 C 38,40 42,41 45,42 C 50,43 54,46 59,51"
+        <path
+          d="M 39,7 C 44,5 49,7 49,11 C 49,14 45,15 42,13 M 42,14 L 39,39 M 35,40 L 43,40"
+          fill="none"
+          stroke="#3d0c15"
+          strokeWidth="3.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M 5,19 C 12,15 18,20 14,24 C 22,20 30,25 38,27 C 44,29 46,31 48,33 C 53,37 52,44 46,47 C 41,50 38,49 39,53"
           fill="none"
           stroke="#3d0c15"
           strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: [0, 1] }}
-          transition={{ duration: 1.3, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 1.2 }}
         />
         {/* shimmer sweep */}
         <g clipPath="url(#ajClip)">
