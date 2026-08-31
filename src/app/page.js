@@ -112,34 +112,33 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
             static bar - it is the same flourish stroke that sweeps in from A's side,
             forms the crossbar, and flows on into J, then loops and redraws. */}
         <path
-          d="M 16,42 L 26,22 L 33,42"
+          d="M 15,47 L 27,15 L 33,47"
           fill="none"
           stroke="#3d0c15"
-          strokeWidth="5"
+          strokeWidth="5.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
-          d="M 38,23.5 C 42.5,21.5 45.5,23.5 43.5,27.5 C 42.5,29.5 39.5,28.5 39.5,26"
+          d="M 41,19 C 45,16.5 49,18.5 47,22.5 C 46,24.5 42.5,23.5 42.5,21"
           fill="none"
           stroke="#3d0c15"
-          strokeWidth="3.4"
+          strokeWidth="3.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
-          d="M 41,27 L 40,38 C 40,42 44,44.5 49.5,40.5"
-          fill="none"
-          stroke="#3d0c15"
-          strokeWidth="4.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <motion.path
-          d="M 19,34 C 24,29 29,33 33,30 C 36,28 37.5,28.5 39,27"
+          d="M 44,23 L 41,47"
           fill="none"
           stroke="#3d0c15"
           strokeWidth="4.6"
+          strokeLinecap="round"
+        />
+        <motion.path
+          d="M 8,35 C 11,30 15,33 13,37 C 19,33 26,38 32,39 C 38,40 42,41 45,42 C 50,43 54,46 59,51"
+          fill="none"
+          stroke="#3d0c15"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
           initial={{ pathLength: 0 }}
