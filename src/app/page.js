@@ -69,6 +69,9 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
           <clipPath id="ajClip">
             <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" />
           </clipPath>
+          <filter id="ajEmboss" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="0.6" stdDeviation="0.35" floodColor="#fff6df" floodOpacity="0.65" />
+          </filter>
         </defs>
         {/* rotating bezel dots */}
         <motion.g
@@ -93,9 +96,33 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
         </motion.g>
         <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" fill="#5b1220" />
         <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="url(#ajGold)" stroke="#3d0c15" strokeWidth="1" />
-        <text x="32" y="38" textAnchor="middle" fontFamily="'Playfair Display', Georgia, serif" fontSize="19" fontWeight="700" fill="#3d0c15">
+        {/* interlocking AJ monogram, styled after the shop's own signboard:
+            bold crest letters cut through by one continuous flourish */}
+        <text
+          x="32.5"
+          y="38"
+          textAnchor="middle"
+          fontFamily="'Playfair Display', Georgia, serif"
+          fontSize="21"
+          fontWeight="800"
+          fill="#3d0c15"
+          stroke="#3d0c15"
+          strokeWidth="0.4"
+          letterSpacing="-2.5"
+          filter="url(#ajEmboss)"
+        >
           AJ
         </text>
+        <motion.path
+          d="M 13.5,33.5 C 19,29 26,36.5 33,32 C 40,27.5 45,33.5 49,27 C 50.8,24 48.5,21.8 45.5,23"
+          fill="none"
+          stroke="#3d0c15"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          opacity="0.85"
+          animate={{ opacity: [0.6, 0.95, 0.6] }}
+          transition={{ repeat: Infinity, duration: 3.6, ease: "easeInOut" }}
+        />
         {/* shimmer sweep */}
         <g clipPath="url(#ajClip)">
           <motion.rect
@@ -158,7 +185,39 @@ function SurajLogo({ withText = true, size = 34 }) {
             <stop offset="0" stopColor="#ffb347" />
             <stop offset="1" stopColor="#ff7a30" />
           </linearGradient>
+          <linearGradient id="sdwTextGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#ffd394" />
+            <stop offset="1" stopColor="#ff9d4d" />
+          </linearGradient>
+          <filter id="sunHaloBlur" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="3.2" />
+          </filter>
         </defs>
+        {/* soft pulsing halo behind the disc, gives the mark a modern glow */}
+        <motion.circle
+          cx="32"
+          cy="32"
+          r="17"
+          fill="url(#sunGrad)"
+          filter="url(#sunHaloBlur)"
+          animate={{ opacity: [0.2, 0.5, 0.2], r: [16, 19, 16] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          style={{ transformOrigin: "32px 32px" }}
+        />
+        {/* slow-spinning dashed accent ring - orbits opposite the AJ badge's dot ring */}
+        <motion.circle
+          cx="32"
+          cy="32"
+          r="19"
+          fill="none"
+          stroke="url(#sunGrad)"
+          strokeWidth="0.8"
+          strokeDasharray="2.2 4.5"
+          opacity="0.6"
+          animate={{ rotate: -360 }}
+          transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
+          style={{ transformOrigin: "32px 32px" }}
+        />
         {SUN_RAYS.map((r) => (
           <motion.line
             key={r.key}
@@ -190,7 +249,16 @@ function SurajLogo({ withText = true, size = 34 }) {
           style={{ transformOrigin: "32px 32px" }}
         />
         <circle cx="32" cy="32" r="14" fill="none" stroke="url(#sunGrad)" strokeWidth="1.5" />
-        <text x="32" y="36.5" textAnchor="middle" fontFamily="ui-sans-serif, system-ui" fontSize="10" fontWeight="700" fill="#ffb347">
+        <text
+          x="32"
+          y="36.5"
+          textAnchor="middle"
+          fontFamily="'Poppins', ui-sans-serif, system-ui"
+          fontSize="10.5"
+          fontWeight="800"
+          letterSpacing="0.5"
+          fill="url(#sdwTextGrad)"
+        >
           SDW
         </text>
       </svg>
