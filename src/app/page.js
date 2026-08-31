@@ -70,6 +70,13 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
               <stop offset="0.5" stopColor="#f1d688" />
               <stop offset="1" stopColor="#b8860b" />
             </linearGradient>
+            {/* dark maroon backing so the gold artwork actually pops instead of
+                blending into a same-tone gold badge */}
+            <radialGradient id="ajDark" cx="0.5" cy="0.38" r="0.75">
+              <stop offset="0" stopColor="#6c1b2b" />
+              <stop offset="0.6" stopColor="#4a0f1c" />
+              <stop offset="1" stopColor="#2a0810" />
+            </radialGradient>
             <clipPath id="ajClip">
               <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" />
             </clipPath>
@@ -109,8 +116,8 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
               );
             })}
           </motion.g>
-          <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" fill="#5b1220" />
-          <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="url(#ajGold)" stroke="#3d0c15" strokeWidth="1" />
+          <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" fill="url(#ajGold)" />
+          <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="url(#ajDark)" stroke="#1a0509" strokeWidth="1" />
         </svg>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
