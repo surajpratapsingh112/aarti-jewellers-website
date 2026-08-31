@@ -59,7 +59,7 @@ function QuoteMark(props) {
 function AartiLogo({ withText = true, size = 40, onDark = false }) {
   return (
     <div className="flex items-center gap-2.5">
-      <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0">
+      <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0 overflow-visible">
         <defs>
           <linearGradient id="ajGold" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#d4af37" />
@@ -69,10 +69,21 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
           <clipPath id="ajClip">
             <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" />
           </clipPath>
-          <filter id="ajEmboss" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0.6" stdDeviation="0.35" floodColor="#fff6df" floodOpacity="0.65" />
+          <filter id="ajHaloBlur" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="3.4" />
           </filter>
         </defs>
+        {/* soft pulsing halo behind the badge - same glow language as the SDW mark */}
+        <motion.circle
+          cx="32"
+          cy="32"
+          r="30"
+          fill="url(#ajGold)"
+          filter="url(#ajHaloBlur)"
+          animate={{ opacity: [0.2, 0.5, 0.2], r: [28, 32, 28] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          style={{ transformOrigin: "32px 32px" }}
+        />
         {/* rotating bezel dots */}
         <motion.g
           animate={{ rotate: 360 }}
@@ -96,32 +107,44 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
         </motion.g>
         <polygon points="32,6 56,19 56,45 32,58 8,45 8,19" fill="#5b1220" />
         <polygon points="32,10 52,21 52,43 32,54 12,43 12,21" fill="url(#ajGold)" stroke="#3d0c15" strokeWidth="1" />
-        {/* interlocking AJ monogram, styled after the shop's own signboard:
-            bold crest letters cut through by one continuous flourish */}
-        <text
-          x="32.5"
-          y="38"
-          textAnchor="middle"
-          fontFamily="'Playfair Display', Georgia, serif"
-          fontSize="21"
-          fontWeight="800"
-          fill="#3d0c15"
-          stroke="#3d0c15"
-          strokeWidth="0.4"
-          letterSpacing="-2.5"
-          filter="url(#ajEmboss)"
-        >
-          AJ
-        </text>
-        <motion.path
-          d="M 13.5,33.5 C 19,29 26,36.5 33,32 C 40,27.5 45,33.5 49,27 C 50.8,24 48.5,21.8 45.5,23"
+        {/* AJ monogram built to match the shop's own signboard: A's two legs and
+            J's hook + tail are always on; the crossbar through A is not a separate
+            static bar - it is the same flourish stroke that sweeps in from A's side,
+            forms the crossbar, and flows on into J, then loops and redraws. */}
+        <path
+          d="M 16,42 L 26,22 L 33,42"
           fill="none"
           stroke="#3d0c15"
-          strokeWidth="1.6"
+          strokeWidth="5"
           strokeLinecap="round"
-          opacity="0.85"
-          animate={{ opacity: [0.6, 0.95, 0.6] }}
-          transition={{ repeat: Infinity, duration: 3.6, ease: "easeInOut" }}
+          strokeLinejoin="round"
+        />
+        <path
+          d="M 38,23.5 C 42.5,21.5 45.5,23.5 43.5,27.5 C 42.5,29.5 39.5,28.5 39.5,26"
+          fill="none"
+          stroke="#3d0c15"
+          strokeWidth="3.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M 41,27 L 40,38 C 40,42 44,44.5 49.5,40.5"
+          fill="none"
+          stroke="#3d0c15"
+          strokeWidth="4.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <motion.path
+          d="M 19,34 C 24,29 29,33 33,30 C 36,28 37.5,28.5 39,27"
+          fill="none"
+          stroke="#3d0c15"
+          strokeWidth="4.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: [0, 1] }}
+          transition={{ duration: 1.3, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 1.2 }}
         />
         {/* shimmer sweep */}
         <g clipPath="url(#ajClip)">
@@ -152,30 +175,7 @@ function AartiLogo({ withText = true, size = 40, onDark = false }) {
 }
 
 // ---------- Animated logo: Suraj Digital Works (site credit) ----------
-// 20 rays, evenly spaced, alternating short/long like real sun rays.
-// All short rays pulse outward together, then all long rays pulse outward
-// together, then back to short - one wave at a time, not per-ray random.
-const SUN_RAY_COUNT = 20;
-const SUN_RAYS = Array.from({ length: SUN_RAY_COUNT }).map((_, i) => {
-  const angle = (i / SUN_RAY_COUNT) * Math.PI * 2;
-  const isLong = i % 2 === 0;
-  const inner = 17;
-  const outer = isLong ? 29 : 22;
-  return {
-    key: i,
-    isLong,
-    x1: 32 + inner * Math.cos(angle),
-    y1: 32 + inner * Math.sin(angle),
-    x2: 32 + outer * Math.cos(angle),
-    y2: 32 + outer * Math.sin(angle),
-    width: isLong ? 2.4 : 1.6,
-  };
-});
-
-const RAY_PULSE_DURATION = 0.8;
-const RAY_PULSE_GAP = 1.0;
-const RAY_PULSE_PERIOD = RAY_PULSE_DURATION + RAY_PULSE_GAP;
-
+// Sun disc with a soft pulsing glow halo and a slow-spinning dashed ring.
 function SurajLogo({ withText = true, size = 34 }) {
   return (
     <div className="inline-flex items-center gap-1.5">
@@ -218,27 +218,6 @@ function SurajLogo({ withText = true, size = 34 }) {
           transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
           style={{ transformOrigin: "32px 32px" }}
         />
-        {SUN_RAYS.map((r) => (
-          <motion.line
-            key={r.key}
-            x1={r.x1}
-            y1={r.y1}
-            x2={r.x2}
-            y2={r.y2}
-            stroke="url(#sunGrad)"
-            strokeWidth={r.width}
-            strokeLinecap="round"
-            initial={{ opacity: 0.18, pathLength: 0.55 }}
-            animate={{ opacity: [0.18, 1, 0.18], pathLength: [0.55, 1, 0.55] }}
-            transition={{
-              repeat: Infinity,
-              duration: RAY_PULSE_DURATION,
-              ease: "easeInOut",
-              repeatDelay: RAY_PULSE_GAP,
-              delay: r.isLong ? RAY_PULSE_PERIOD / 2 : 0,
-            }}
-          />
-        ))}
         <motion.circle
           cx="32"
           cy="32"
